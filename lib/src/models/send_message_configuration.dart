@@ -50,6 +50,8 @@ class SendMessageConfiguration {
   /// Provides configuration of image picker functionality.
   final ImagePickerIconsConfiguration? imagePickerIconsConfig;
 
+  /// Provides configuration of file picker functionality.
+  final FilePickerIconsConfiguration?  filePickerIconsConfig;
   /// Provides configuration of image picker plugin.
   final ImagePickerConfiguration? imagePickerConfiguration;
 
@@ -73,6 +75,7 @@ class SendMessageConfiguration {
 
   const SendMessageConfiguration({
     this.textFieldConfig,
+    this.filePickerIconsConfig,
     this.textFieldBackgroundColor,
     this.imagePickerIconsConfig,
     this.imagePickerConfiguration,
@@ -87,6 +90,20 @@ class SendMessageConfiguration {
     this.enableGalleryImagePicker = true,
     this.voiceRecordingConfiguration,
     this.micIconColor,
+  });
+}
+
+class FilePickerIconsConfiguration {
+
+  /// Provides ability to pass custom file picker icon.
+  final Widget? fileImagePickerIcon;
+
+  /// Used to give color to file icon.
+  final Color? fileIconColor;
+
+  const FilePickerIconsConfiguration({
+    this.fileImagePickerIcon,
+    this.fileIconColor,
   });
 }
 
