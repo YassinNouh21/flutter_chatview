@@ -52,6 +52,13 @@ class SendMessageConfiguration {
 
   /// Provides configuration of file picker functionality.
   final FilePickerIconsConfiguration?  filePickerIconsConfig;
+
+  /// Provides configuration for file picker plugin.
+  final FilePickerConfiguration?  filePickerConfiguration;
+
+  /// Enable/disable file picker. Enabled by default.
+  final bool enableFilePicker;
+
   /// Provides configuration of image picker plugin.
   final ImagePickerConfiguration? imagePickerConfiguration;
 
@@ -83,11 +90,13 @@ class SendMessageConfiguration {
     this.sendButtonIcon,
     this.replyDialogColor,
     this.replyTitleColor,
+    this.filePickerConfiguration,
     this.replyMessageColor,
     this.closeIconColor,
     this.allowRecordingVoice = true,
     this.enableCameraImagePicker = true,
     this.enableGalleryImagePicker = true,
+    this.enableFilePicker = true,
     this.voiceRecordingConfiguration,
     this.micIconColor,
   });
@@ -107,6 +116,18 @@ class FilePickerIconsConfiguration {
   });
 }
 
+class FilePickerConfiguration {
+  /// Used to give file extension filter.
+  final List<String>? allowedExtensions;
+
+  /// Callback when file is picked from directory,
+  final Future<String?> Function(String? path)? onFilePicked;
+
+  const FilePickerConfiguration({
+    this.onFilePicked,
+    this.allowedExtensions,
+  });
+}
 class ImagePickerIconsConfiguration {
   /// Provides ability to pass custom gallery image picker icon.
   final Widget? galleryImagePickerIcon;

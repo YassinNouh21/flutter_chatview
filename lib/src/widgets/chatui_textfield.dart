@@ -24,6 +24,7 @@ import 'dart:io' show Platform;
 
 import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:chatview/src/utils/constants/constants.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -41,6 +42,7 @@ class ChatUITextField extends StatefulWidget {
     required this.onPressed,
     required this.onRecordingComplete,
     required this.onImageSelected,
+    required this.onFileSelected,
   }) : super(key: key);
 
   /// Provides configuration of default text field in chat.
@@ -57,6 +59,9 @@ class ChatUITextField extends StatefulWidget {
 
   /// Provides callback once voice is recorded.
   final Function(String?) onRecordingComplete;
+
+  /// Provides callback when user select images from camera/gallery.
+  final StringsCallBack onFileSelected;
 
   /// Provides callback when user select images from camera/gallery.
   final StringsCallBack onImageSelected;
@@ -81,6 +86,9 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
 
   ImagePickerIconsConfiguration? get imagePickerIconsConfig =>
       sendMessageConfig?.imagePickerIconsConfig;
+
+  FilePickerIconsConfiguration? get filePickerIconsConfig =>
+      sendMessageConfig?.filePickerIconsConfig;
 
   TextFieldConfiguration? get textFieldConfig =>
       sendMessageConfig?.textFieldConfig;
@@ -218,6 +226,23 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
                   } else {
                     return Row(
                       children: [
+                        if (sendMessageConfig?.enableFilePicker ?? false)
+                          IconButton(
+                            constraints: const BoxConstraints(),
+                            onPressed: () => _onFileIconPressed(
+                              FilePicker.platform,
+                              config:
+                                  sendMessageConfig?.filePickerConfiguration,
+                            ),
+                            icon: filePickerIconsConfig?.fileImagePickerIcon ??
+                                Icon(
+                                  Icons.attach_file,
+                                  color: sendMessageConfig
+                                          ?.filePickerIconsConfig
+                                          ?.fileIconColor ??
+                                      Colors.black,
+                                ),
+                          ),
                         if (!isRecordingValue) ...[
                           if (sendMessageConfig?.enableCameraImagePicker ??
                               true)
@@ -316,6 +341,29 @@ class _ChatUITextFieldState extends State<ChatUITextField> {
       widget.onImageSelected(imagePath ?? '', '');
     } catch (e) {
       widget.onImageSelected('', e.toString());
+    }
+  }
+
+  void _onFileIconPressed(
+    FilePicker result, {
+    FilePickerConfiguration? config,
+  }) async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: config?.allowedExtensions ?? ['pdf', 'doc'],
+      );
+
+      if (result != null) {
+        String? filePath = result.files.single.path;
+        if (config?.onFilePicked != null) {
+          String? updatedFilePath = await config?.onFilePicked!(filePath);
+          if (updatedFilePath != null) filePath = updatedFilePath;
+          widget.onFileSelected(filePath ?? '', '');
+        }
+      }
+    } catch (e) {
+      widget.onFileSelected('', '');
     }
   }
 

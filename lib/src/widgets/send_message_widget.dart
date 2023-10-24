@@ -231,6 +231,7 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
                           sendMessageConfig: widget.sendMessageConfig,
                           onRecordingComplete: _onRecordingComplete,
                           onImageSelected: _onImageSelected,
+                          onFileSelected: _onFileSelected,
                         )
                       ],
                     ),
@@ -349,5 +350,13 @@ class SendMessageWidgetState extends State<SendMessageWidget> {
     _focusNode.dispose();
     _replyMessage.dispose();
     super.dispose();
+  }
+
+  void _onFileSelected(String filePath, String error) {
+    debugPrint('Call in Send Message Widget when file picked');
+    if (filePath.isNotEmpty) {
+      widget.onSendTap.call(filePath, replyMessage, MessageType.file);
+      _assignRepliedMessage();
+    }
   }
 }
